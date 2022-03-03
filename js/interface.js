@@ -1,6 +1,6 @@
-class Interface{
+export class Interface{
 	//var cosos = [];
-	
+
 	constructor(RM) {
 		this.generateSliders();
 		this.drawActive = true;
@@ -14,15 +14,15 @@ class Interface{
 		let sepy = 30;
 		let marginsepydown = 10;
 		let yy = margintop;
-		
+
 		let w = 150;
 		let h = sepy;
 		if (RM.objts.length > 0 && RM.shorojb[RM.activeRender] != 1) {
 			if (RM.objts[RM.activeRender].localUniformsNames.length > 0 ) {
 				for (let i = 0; i < RM.objts[RM.activeRender].localUniformsNames.length; i++) {
-					let sl = new Slider(60, 
-										yy, 
-										RM.objts[RM.activeRender].localUniformsNames[i], 
+					let sl = new Slider(60,
+										yy,
+										RM.objts[RM.activeRender].localUniformsNames[i],
 										RM.objts[RM.activeRender].localUniformsValues[i],
 										w,
 										h);
@@ -88,17 +88,17 @@ class Interface{
 		}
 
     }
-	
+
 
 }
 
-class Cajita {
+export class Cajita {
 	constructor(x, y, name, index,isActiveOne) {
 		this.pos = createVector(x, y);
 		this.name = name;
 		this.index = index;
-		this.w = 200; 
-		this.h = 30; 
+		this.w = 200;
+		this.h = 30;
 		this.active = isActiveOne;
 	}
 
@@ -126,13 +126,13 @@ class Cajita {
 
     }
 }
-class Slider {
+export class Slider {
 
 	constructor(x, y,name,value,w,h) {
 		this.pos = createVector(x, y);
 		this.name = name;
 		this.w = w;
-		this.h = h; 
+		this.h = h;
 		this.isFxHashControlled = false;
 		this.value = value;
     }
@@ -169,7 +169,7 @@ class Slider {
 				fill(150);
 			}
         }
-		//RECT SUPERIOR: 
+		//RECT SUPERIOR:
 		rect(xx, yy, map(this.value, 0., 1., 0, this.w), this.h);
 		fill(255);
 		textSize(20);

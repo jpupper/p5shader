@@ -1,4 +1,5 @@
-import {loadStrings} from 'p5'
+import p5 from 'p5';
+
 let cargoArchivo = true;
 let WEBGL_ON = false; //Algunas funcionan con esto otras no. //Si cambia esto cambia e
 let QUADCANVAS = false;
@@ -39,8 +40,8 @@ function processFile(file) {
 			RM.addShader(file.data, RM.activeRender + 1);
 		} else {
 		}*/
-		interface.drawActive = false;
-		interface.cleanSliders();
+		interface2.drawActive = false;
+		interface2.cleanSliders();
 		console.log(file.data);
 		RM.addShader(file.data, RM.activeRender + 1, file.name);
 
@@ -71,7 +72,7 @@ function loadJSONjp(filedata) {
 			}
 			setTimeout(() => {
 				if (!disableDrawInterface) {
-					interface.cleanSliders();
+					interface2.cleanSliders();
 				}
 				for (let i = 0; i < RM.objts.length; i++) {
 					for (let o = 0; o < RM.objts[i].localUniformsNames.length; o++) {
@@ -155,7 +156,7 @@ class Interface {
 				}
 			}
 			for (let i = 0; i < RM.objts.length; i++) {
-				let x = windowWidth * .45;
+				let x = this.windowWidth * .45;
 				let y = i * 50 + sepy + marginsepydown;
 				//var cajita = ;
 
@@ -212,9 +213,10 @@ class Interface {
 	}
 }
 
-class Cajita {
+class Cajita extends p5{
 	constructor(x, y, name, index, isActiveOne) {
-		this.pos = createVector(x, y);
+		super(() => {})
+		this.pos = this.createVector(x, y);
 		this.name = name;
 		this.index = index;
 		this.w = 200;
@@ -300,15 +302,18 @@ class Slider {
 }
 
 
-
-
-class RenderManager{
+export class RenderManager extends p5{
 	//var cosos = [];
 	constructor(){
+		super(() => {})
 		this.pgs = [];//ARRAY DE LOS PGRAPHICS
 		this.objts = [];//ARRAY DE LOS OBJETOS
 		this.shorojb = []; //ESTO ES PARA QUE SEPA SI TIPO TIENE QUE O ACTUALIZAR EL SHADER O EL OBJETO.
 		this.activeRender = 0;
+	}
+
+	setup(){
+		this.createCanvas(this.windowWidth, this.windowHeight);
 	}
 
 	clean() {
@@ -323,9 +328,9 @@ class RenderManager{
 
 		let auxpg;
 		if (QUADCANVAS) {
-			auxpg = createGraphics(windowHeight, windowHeight, WEBGL);
+			auxpg = this.createGraphics(windowHeight, windowHeight, this.WEBGL);
 		} else {
-			auxpg = createGraphics(windowWidth, windowHeight, WEBGL);
+			auxpg = this.createGraphics(this.windowWidth, this.windowHeight, this.WEBGL);
         }
 
 
@@ -338,7 +343,7 @@ class RenderManager{
 
 	}
 	addP5draw(obj,index){
-
+		const {WEBGL_ON, QUADCANVAS, windowWidth, windowHeight, WEBGL} = this
 		if (WEBGL_ON) {
 			if (QUADCANVAS) {
 				this.pgs[index] = createGraphics(windowHeight, windowHeight, WEBGL);
@@ -367,15 +372,15 @@ class RenderManager{
 	resize(){
 		for (var i =0; i<this.pgs.length; i++){
 			console.log("RISIZ "+i);
-			this.pgs[i].resizeCanvas(windowWidth,windowHeight);
+			this.pgs[i].resizeCanvas(this.windowWidth,this.windowHeight);
 		}
 	}
 
 
 	draw(_x,_y,_w,_h){
 
-		let w = windowWidth;
-		let h = windowHeight;
+		let w = this.windowWidth;
+		let h = this.windowHeight;
 
 		if (_w) {
 			w = _w;
@@ -397,7 +402,7 @@ class RenderManager{
 		}
 		this.updateDrawOnBuffers();
 		if (this.pgs.length > 0 && this.pgs[this.activeRender] != null) {
-			image(this.pgs[this.activeRender], x, y, w, h);
+			this.image(this.pgs[this.activeRender], x, y, w, h);
 		}
 	}
 	updateDrawOnBuffers() {
@@ -410,7 +415,7 @@ class RenderManager{
 				if (this.objts[i].loaded) {
 					this.pgs[i].shader(this.objts[i].sh);
 				}
-				this.pgs[i].rect(windowWidth, windowHeight, 0, 0);
+				this.pgs[i].rect(this.windowWidth, this.windowHeight, 0, 0);
 			}
 		}
     }
@@ -461,8 +466,9 @@ class RenderManager{
 	}
 }
 
-class ShaderManager{
+class ShaderManager extends p5{
 	constructor(dir) {
+		super(() => {})
 		this.loaded = false;
 		this.reservedWords = ["feedback","resolution","time",
 							 "mouse","tx","tx2","tx3","let","mousePressed",
@@ -476,7 +482,7 @@ class ShaderManager{
 
 			this.name = dir;
 			//pasarAarray();
-			loadStrings(dir, (result) => {
+			this.loadStrings(dir, (result) => {
 				let localUniformsValues = [];
 				let localUniformsNames = [];
 				for (let i = 0; i < result.length; i++) {
@@ -500,12 +506,13 @@ class ShaderManager{
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
 			});0
-			this.sh = loadShader('shaders/base.vert', this.dir, () => {
+			this.sh = this.loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
 		}
 	}
 	setup(){
+		this.createCanvas(this.windowWidth, this.windowHeight);
 		this.loadAllVariables();
 	}
 	loadAllVariables(dir) {
@@ -516,7 +523,7 @@ class ShaderManager{
 
 			this.name = dir;
 			//pasarAarray();
-			loadStrings(dir, (result) => {
+			this.loadStrings(dir, (result) => {
 				let localUniformsValues = [];
 				let localUniformsNames = [];
 				for (let i = 0; i < result.length; i++) {
@@ -539,18 +546,19 @@ class ShaderManager{
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
 			});
-			this.sh = loadShader('shaders/base.vert', this.dir, () => {
+			this.sh = this.loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
 		}
 	}
 	update(_pg) {
+		const {width, height, mouseX, mouseY, touches, mouseIsPressed} = this;
 		//This are the global uniforms. The ones for all shaders
 		//Estas son los uniforms globales, las que entran en todos los shaders
 		if (this.loaded) {
 			this.sh.setUniform("feedback",_pg)
 			this.sh.setUniform("resolution", [width, height])
-			this.sh.setUniform("time", millis()*.001)
+			this.sh.setUniform("time", this.millis()*.001)
 			this.sh.setUniform("mouse", [mouseX / width, mouseY / height])
 			if (touches.length > 0) {
 				this.sh.setUniform("tp1", [touches[0].x / width, touches[0].y / height]);
@@ -742,7 +750,7 @@ function star(x, y, radius1, radius2, npoints) {
 	endShape(CLOSE);
 }
 
-function star(x, y, radius1, radius2, npoints, _ps) {
+function star2(x, y, radius1, radius2, npoints, _ps) {
 	if (_ps) {
 		let angle = TWO_PI / npoints;
 		let halfAngle = angle / 2.0;
@@ -832,9 +840,9 @@ class imgManager {
 		push();
 		if (this.flipx) {
 			scale(-1, 1)
-			image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
+			this.image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
 		} else {
-			image(this.img, this.pos.x, this.pos.y, this.w, this.h);
+			this.image(this.img, this.pos.x, this.pos.y, this.w, this.h);
 		}
 		pop();
 	}
@@ -875,9 +883,9 @@ class imgManager2 {
 		push();
 		if (this.flipx) {
 			scale(-1, 1)
-			image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
+			this.image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
 		} else {
-			image(this.img, this.pos.x, this.pos.y, this.w, this.h);
+			this.image(this.img, this.pos.x, this.pos.y, this.w, this.h);
 		}
 		pop();
 	}

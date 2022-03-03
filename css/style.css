@@ -9,7 +9,7 @@ html, body {
 
 }
 
-html {	
+html {
 	flex-direction: column;
 }
 
@@ -22,6 +22,9 @@ body {
 }
 
 canvas {
+	position: absolute;
+	top:0;
+	left:0;
 	margin: auto;
 	display: block;
 	//max-width: 800px;
@@ -45,7 +48,7 @@ canvas {
 	right: 45vw;
 	top:7vh;
     font-size: 2rem;
-	-webkit-user-select: none; /* Safari */        
+	-webkit-user-select: none; /* Safari */
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
@@ -58,7 +61,7 @@ canvas {
 	right: 45vw;
 	top:50vh;
     font-size: 2rem;
-	-webkit-user-select: none; /* Safari */        
+	-webkit-user-select: none; /* Safari */
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
