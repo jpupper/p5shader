@@ -1,3 +1,5 @@
+import p5 from 'p5';
+
 let cargoArchivo = true;
 let WEBGL_ON = false; //Algunas funcionan con esto otras no. //Si cambia esto cambia e
 let QUADCANVAS = false;
@@ -38,8 +40,8 @@ function processFile(file) {
 			RM.addShader(file.data, RM.activeRender + 1);
 		} else {
 		}*/
-		interface.drawActive = false;
-		interface.cleanSliders();
+		interface2.drawActive = false;
+		interface2.cleanSliders();
 		console.log(file.data);
 		RM.addShader(file.data, RM.activeRender + 1, file.name);
 
@@ -70,7 +72,7 @@ function loadJSONjp(filedata) {
 			}
 			setTimeout(() => {
 				if (!disableDrawInterface) {
-					interface.cleanSliders();
+					interface2.cleanSliders();
 				}
 				for (let i = 0; i < RM.objts.length; i++) {
 					for (let o = 0; o < RM.objts[i].localUniformsNames.length; o++) {
@@ -154,7 +156,7 @@ class Interface {
 				}
 			}
 			for (let i = 0; i < RM.objts.length; i++) {
-				let x = windowWidth * .45;
+				let x = this.windowWidth * .45;
 				let y = i * 50 + sepy + marginsepydown;
 				//var cajita = ;
 
@@ -211,9 +213,10 @@ class Interface {
 	}
 }
 
-class Cajita {
+class Cajita extends p5{
 	constructor(x, y, name, index, isActiveOne) {
-		this.pos = createVector(x, y);
+		super(() => {})
+		this.pos = this.createVector(x, y);
 		this.name = name;
 		this.index = index;
 		this.w = 200;
@@ -288,7 +291,7 @@ class Slider {
 				fill(150);
 			}
 		}
-		//RECT SUPERIOR: 
+		//RECT SUPERIOR:
 		rect(xx, yy, map(this.value, 0., 1., 0, this.w), this.h);
 		fill(255);
 		textSize(20);
@@ -299,17 +302,20 @@ class Slider {
 }
 
 
-
-
-class RenderManager{
+export class RenderManager extends p5{
 	//var cosos = [];
 	constructor(){
+		super(() => {})
 		this.pgs = [];//ARRAY DE LOS PGRAPHICS
 		this.objts = [];//ARRAY DE LOS OBJETOS
 		this.shorojb = []; //ESTO ES PARA QUE SEPA SI TIPO TIENE QUE O ACTUALIZAR EL SHADER O EL OBJETO.
 		this.activeRender = 0;
 	}
-	
+
+	setup(){
+		this.createCanvas(this.windowWidth, this.windowHeight);
+	}
+
 	clean() {
 		this.pgs = [];//ARRAY DE LOS PGRAPHICS
 		this.objts = [];//ARRAY DE LOS OBJETOS
@@ -322,22 +328,22 @@ class RenderManager{
 
 		let auxpg;
 		if (QUADCANVAS) {
-			auxpg = createGraphics(windowHeight, windowHeight, WEBGL);
+			auxpg = this.createGraphics(windowHeight, windowHeight, this.WEBGL);
 		} else {
-			auxpg = createGraphics(windowWidth, windowHeight, WEBGL);
+			auxpg = this.createGraphics(this.windowWidth, this.windowHeight, this.WEBGL);
         }
-		
 
-		this.pgs.push(auxpg);	
+
+		this.pgs.push(auxpg);
 		this.shorojb[index] = 0;
 
 		if (index > this.activeRender) {
 			this.activeRender = index;
 		}
-		
-	}	
+
+	}
 	addP5draw(obj,index){
-		
+		const {WEBGL_ON, QUADCANVAS, windowWidth, windowHeight, WEBGL} = this
 		if (WEBGL_ON) {
 			if (QUADCANVAS) {
 				this.pgs[index] = createGraphics(windowHeight, windowHeight, WEBGL);
@@ -358,7 +364,7 @@ class RenderManager{
 		if (index > this.activeRender) {
 			this.activeRender = index;
 		}
-	
+
 	}
 	resizePG(w, h, index) {
 		this.pgs[index].resizeCanvas(w,h);
@@ -366,15 +372,15 @@ class RenderManager{
 	resize(){
 		for (var i =0; i<this.pgs.length; i++){
 			console.log("RISIZ "+i);
-			this.pgs[i].resizeCanvas(windowWidth,windowHeight);
+			this.pgs[i].resizeCanvas(this.windowWidth,this.windowHeight);
 		}
 	}
 
-	
-	draw(_x,_y,_w,_h){	
 
-		let w = windowWidth;
-		let h = windowHeight; 
+	draw(_x,_y,_w,_h){
+
+		let w = this.windowWidth;
+		let h = this.windowHeight;
 
 		if (_w) {
 			w = _w;
@@ -384,7 +390,7 @@ class RenderManager{
 			h = _h;
 		}
 
-		let x = 0; 
+		let x = 0;
 		let y = 0;
 
 		if (_x) {
@@ -396,8 +402,8 @@ class RenderManager{
 		}
 		this.updateDrawOnBuffers();
 		if (this.pgs.length > 0 && this.pgs[this.activeRender] != null) {
-			image(this.pgs[this.activeRender], x, y, w, h); 	
-		}	
+			this.image(this.pgs[this.activeRender], x, y, w, h);
+		}
 	}
 	updateDrawOnBuffers() {
 		for (var i = 0; i < this.pgs.length; i++) {
@@ -409,12 +415,12 @@ class RenderManager{
 				if (this.objts[i].loaded) {
 					this.pgs[i].shader(this.objts[i].sh);
 				}
-				this.pgs[i].rect(windowWidth, windowHeight, 0, 0);
+				this.pgs[i].rect(this.windowWidth, this.windowHeight, 0, 0);
 			}
 		}
     }
 	update(){
-		for (var i =0; i<this.objts.length; i++){		
+		for (var i =0; i<this.objts.length; i++){
 			if (this.shorojb[i] == 1) {
 				if (this.objts[i] != null) {
 					this.objts[i].update();
@@ -434,10 +440,10 @@ class RenderManager{
 			}
 		}
 	}
-	
+
 	//Bueno que lea todos los nombres y que setee a todos los nombres que coindicen con eso ya fue
-	setValue(name,val,gui){		
-		//No se que tan bien esta que esto lo haga todos los frames pero bueno. 
+	setValue(name,val,gui){
+		//No se que tan bien esta que esto lo haga todos los frames pero bueno.
 		for (let j = 0; j < this.objts.length; j++) {
 			if (this.objts[j] != null) {
 				for (let i = 0; i < this.objts[j].localUniformsNames.length; i++) {
@@ -452,7 +458,7 @@ class RenderManager{
 								interface.sliders[u].isFxHashControlled = true;
 								interface.sliders[u].value = val;
 							}
-						}							
+						}
 					}*/
 				}
 			}
@@ -460,14 +466,15 @@ class RenderManager{
 	}
 }
 
-class ShaderManager{
+class ShaderManager extends p5{
 	constructor(dir) {
+		super(() => {})
 		this.loaded = false;
 		this.reservedWords = ["feedback","resolution","time",
 							 "mouse","tx","tx2","tx3","let","mousePressed",
 		"tp1","tp2","tp3","tp4","tp5","touchesCount"];
-		
-		
+
+
 		if (!this.loaded) {
 			this.localUniformsNames = [];
 			this.localUniformsValues = [];
@@ -475,7 +482,7 @@ class ShaderManager{
 
 			this.name = dir;
 			//pasarAarray();
-			loadStrings(dir, (result) => {
+			this.loadStrings(dir, (result) => {
 				let localUniformsValues = [];
 				let localUniformsNames = [];
 				for (let i = 0; i < result.length; i++) {
@@ -483,7 +490,7 @@ class ShaderManager{
 					let words = result[i].split(' ');
 					//localUniformsNames.push(words[2]);
 					//localUniformsValues.push(genR(1));
-					
+
 					let noReservedWord = false;
 					for(let k=0; k<this.reservedWords.length; k++){
 						if(words[2] == this.reservedWords[k]){
@@ -499,12 +506,13 @@ class ShaderManager{
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
 			});0
-			this.sh = loadShader('shaders/base.vert', this.dir, () => {
+			this.sh = this.loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
 		}
 	}
 	setup(){
+		this.createCanvas(this.windowWidth, this.windowHeight);
 		this.loadAllVariables();
 	}
 	loadAllVariables(dir) {
@@ -515,7 +523,7 @@ class ShaderManager{
 
 			this.name = dir;
 			//pasarAarray();
-			loadStrings(dir, (result) => {
+			this.loadStrings(dir, (result) => {
 				let localUniformsValues = [];
 				let localUniformsNames = [];
 				for (let i = 0; i < result.length; i++) {
@@ -523,7 +531,7 @@ class ShaderManager{
 					let words = result[i].split(' ');
 					//localUniformsNames.push(words[2]);
 					//localUniformsValues.push(genR(1));
-					
+
 					let noReservedWord = false;
 					for(let k=0; k<this.reservedWords.length; k++){
 						if(words[2] == this.reservedWords[k]){
@@ -538,18 +546,19 @@ class ShaderManager{
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
 			});
-			this.sh = loadShader('shaders/base.vert', this.dir, () => {
+			this.sh = this.loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
-		}	
+		}
 	}
 	update(_pg) {
+		const {width, height, mouseX, mouseY, touches, mouseIsPressed} = this;
 		//This are the global uniforms. The ones for all shaders
 		//Estas son los uniforms globales, las que entran en todos los shaders
 		if (this.loaded) {
-			this.sh.setUniform("feedback",_pg) 
-			this.sh.setUniform("resolution", [width, height]) 
-			this.sh.setUniform("time", millis()*.001) 
+			this.sh.setUniform("feedback",_pg)
+			this.sh.setUniform("resolution", [width, height])
+			this.sh.setUniform("time", this.millis()*.001)
 			this.sh.setUniform("mouse", [mouseX / width, mouseY / height])
 			if (touches.length > 0) {
 				this.sh.setUniform("tp1", [touches[0].x / width, touches[0].y / height]);
@@ -572,7 +581,7 @@ class ShaderManager{
 			}else{
 				this.sh.setUniform("mousePressed", 0);
 			}
-			
+
 			for (var i = 0; i < this.localUniformsNames.length; i++) {
 				this.sh.setUniform(this.localUniformsNames[i],
 								   this.localUniformsValues[i]);
@@ -596,7 +605,7 @@ class ManagerTemplate {
 }
 
 
-//TEMPLATE PARTICLE FOR POSITION SPEED AND ALL 
+//TEMPLATE PARTICLE FOR POSITION SPEED AND ALL
 class Particle {
 
 	constructor(_p,
@@ -741,7 +750,7 @@ function star(x, y, radius1, radius2, npoints) {
 	endShape(CLOSE);
 }
 
-function star(x, y, radius1, radius2, npoints, _ps) {
+function star2(x, y, radius1, radius2, npoints, _ps) {
 	if (_ps) {
 		let angle = TWO_PI / npoints;
 		let halfAngle = angle / 2.0;
@@ -774,7 +783,7 @@ function star(x, y, radius1, radius2, npoints, _ps) {
 }
 
 
-//CORNER OVERRECT : 
+//CORNER OVERRECT :
 function overRect(mx, my, x, y, w, h) {
 	if (mx > x && mx < x + w && my > y && my < y + h) {
 		return true;
@@ -831,9 +840,9 @@ class imgManager {
 		push();
 		if (this.flipx) {
 			scale(-1, 1)
-			image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
+			this.image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
 		} else {
-			image(this.img, this.pos.x, this.pos.y, this.w, this.h);
+			this.image(this.img, this.pos.x, this.pos.y, this.w, this.h);
 		}
 		pop();
 	}
@@ -874,9 +883,9 @@ class imgManager2 {
 		push();
 		if (this.flipx) {
 			scale(-1, 1)
-			image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
+			this.image(this.img, -this.pos.x - this.w / 2, this.pos.y, this.w, this.h);
 		} else {
-			image(this.img, this.pos.x, this.pos.y, this.w, this.h);
+			this.image(this.img, this.pos.x, this.pos.y, this.w, this.h);
 		}
 		pop();
 	}
