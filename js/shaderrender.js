@@ -302,7 +302,7 @@ class Slider {
 }
 
 
-export class RenderManager extends p5{
+class RenderManager extends p5{
 	//var cosos = [];
 	constructor(){
 		super(() => {})
@@ -1006,3 +1006,4 @@ class AnimatedLine {
 
 	}
 }
+export {RenderManager}
