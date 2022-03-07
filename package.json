@@ -10,6 +10,7 @@
     "p5": "^1.4.1"
   },
   "devDependencies": {
-    "vite": "^2.8.4"
+    "vite": "^2.8.4",
+    "vite-plugin-restart": "^0.1.1"
   }
 }
