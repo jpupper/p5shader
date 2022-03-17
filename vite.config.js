@@ -2,13 +2,13 @@ const path = require('path')
 import ViteRestart from 'vite-plugin-restart';
 
 export default {
-    plugins: [
-      ViteRestart({
-        reload: [
-            './public/shaders/**/*',
-        ]
-      })
-    ],
+//    plugins: [
+//      ViteRestart({
+//        reload: [
+//            './shaders/**/*',
+//        ]
+//      })
+//    ],
     build: {
         lib: {
             entry: path.resolve(__dirname, 'js/script.js'),

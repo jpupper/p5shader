@@ -310,6 +310,9 @@ class RenderManager extends p5{
 		this.objts = [];//ARRAY DE LOS OBJETOS
 		this.shorojb = []; //ESTO ES PARA QUE SEPA SI TIPO TIENE QUE O ACTUALIZAR EL SHADER O EL OBJETO.
 		this.activeRender = 0;
+		this.timestamp = null;
+		this.filename;
+		this.mainShader;
 	}
 
 	setup(){
@@ -322,9 +325,27 @@ class RenderManager extends p5{
 		this.shorojb = []; //Array que determina si el objeto es un shader o no (?)
 	}
 
+	checkTimeStamp(file) {
+		fetch(file, {cache: 'no-store'}).then(r => {
+    		var ts = r.headers.get('Last-Modified');
+			if (this.timestamp && ts != this.timestamp) {
+				this.mainShader.load(this.filename + '?version=' + this.random(100));
+			}
+			this.timestamp = ts;
+			return r.text();
+		})
+	}
+
 	addShader(dir,index,_name){
+		this.filename = dir;
+		if (index == 0) {
+			setInterval(() => {
+				this.checkTimeStamp(this.filename);
+			}, 200);
+		}
 		this.objts[index] = new ShaderManager(dir);
 		this.objts[index].name = _name;
+		this.mainShader = this.objts[0];
 
 		let auxpg;
 		if (QUADCANVAS) {
@@ -419,14 +440,14 @@ class RenderManager extends p5{
 			}
 		}
     }
-	update(){
-		for (var i =0; i<this.objts.length; i++){
+	update(time){
+		for (var i =0; i<this.objts.length; i++){		
 			if (this.shorojb[i] == 1) {
 				if (this.objts[i] != null) {
-					this.objts[i].update();
+					this.objts[i].update(null, time);
 				}
 			}else if(this.shorojb[i] == 0){
-				this.objts[i].update(this.pgs[i]);
+				this.objts[i].update(this.pgs[i], time);
 			}
 		}
 		this.updateNONglobalUniforms();
@@ -469,6 +490,9 @@ class RenderManager extends p5{
 class ShaderManager extends p5{
 	constructor(dir) {
 		super(() => {})
+		this.load(dir);
+	}
+	load(dir) {
 		this.loaded = false;
 		this.reservedWords = ["feedback","resolution","time",
 							 "mouse","tx","tx2","tx3","let","mousePressed",
@@ -551,14 +575,18 @@ class ShaderManager extends p5{
 			});
 		}
 	}
-	update(_pg) {
+	update(_pg, time) {
 		const {width, height, mouseX, mouseY, touches, mouseIsPressed} = this;
 		//This are the global uniforms. The ones for all shaders
 		//Estas son los uniforms globales, las que entran en todos los shaders
 		if (this.loaded) {
 			this.sh.setUniform("feedback",_pg)
 			this.sh.setUniform("resolution", [width, height])
-			this.sh.setUniform("time", this.millis()*.001)
+			if (time || time === 0) {
+				this.sh.setUniform("time", time);
+			} else {
+				this.sh.setUniform("time", this.millis()*.001);
+			}
 			this.sh.setUniform("mouse", [mouseX / width, mouseY / height])
 			if (touches.length > 0) {
 				this.sh.setUniform("tp1", [touches[0].x / width, touches[0].y / height]);
@@ -1006,4 +1034,177 @@ class AnimatedLine {
 
 	}
 }
+
+class FPS extends p5 {
+	constructor() {
+		super(() => {})
+		this.fps = document.createElement('div');
+		this.fps.style.position = 'fixed';
+		this.fps.style.left = '10px';
+		this.fps.style.top = '10px';
+		this.fps.style.backgroundColor = 'rgba(0,0,0,.5)';
+		this.fps.style.color = 'white';
+		this.fps.style.fontSize = '30px';
+		this.fps.style.padding = '10px';
+		document.body.append(this.fps);
+		this.prevFrame = this.millis();
+		this.frame = 0;
+		this.acum = 0;
+		this.rate = 20;
+	}
+
+	update() {
+		this.frame++;
+		let dt = this.millis() - this.prevFrame;
+		this.prevFrame = this.millis();
+		this.acum += dt;
+		if (this.frame % this.rate == 0) {
+			this.fps.innerHTML = (1000 / (this.acum / this.frame)).toFixed(1);
+			this.frame = 0;
+			this.acum = 0;
+		}
+	}
+}
+
+class Timeline extends p5 {
+	constructor() {
+		super(() => {})
+		let that = this;
+		this.currentPosition = 0;
+		this.playing = true;
+		this.playStart = this.millis();
+		this.startTime = 0;
+		this.endTime = 60;
+		this.range = document.createElement('input');
+		this.range.type = 'range';
+		this.range.style.zIndex = 10;
+		this.range.style.position = 'fixed';
+		this.range.style.bottom = '15px';
+		this.range.style.left = '125px';
+		let width = window.innerWidth;
+		this.range.style.width = (width-310)+'px';
+		this.range.id = 'timeline';
+		this.range.step = 0.5;
+		this.range.value = 0;
+		this.range.oninput = function() {that.onChange();}
+		document.body.append(this.range);
+
+		this.play = document.createElement('button');
+		this.play.style.zIndex = 10;
+		this.play.style.position = 'fixed';
+		this.play.style.bottom = '10px';
+		this.play.style.width = '50px';
+		this.play.style.height = '30px';
+		this.play.style.left = '10px';
+		this.play.id = 'play';
+		this.play.innerHTML = '∎';
+		this.play.onclick = function() {that.onPlayStop();}
+		document.body.append(this.play);
+
+		this.elapsed = document.createElement('input');
+		this.elapsed.style.zIndex = 10;
+		this.elapsed.style.position = 'fixed';
+		this.elapsed.style.bottom = '10px';
+		this.elapsed.style.left = '60px';
+		this.elapsed.style.width = '60px';
+		this.elapsed.style.height = '30px';
+		this.elapsed.style.textAlign = 'center';
+		this.elapsed.style.fontSize = '15px';
+		this.elapsed.style.lineHeight = '30px';
+		this.elapsed.style.backgroundColor = 'black';
+		this.elapsed.style.color = 'white';
+		this.elapsed.id = 'elapsed';
+		document.body.append(this.elapsed);
+
+		this.from = document.createElement('input');
+		this.from.type = 'number';
+		this.from.min = 0;
+		this.from.value = this.startTime;
+		this.from.style.zIndex = 10;
+		this.from.style.bottom = '10px';
+		this.from.style.position = 'fixed';
+		this.from.style.right = '90px';
+		this.from.style.width = '80px';
+		this.from.style.height = '30px';
+		this.from.style.textAlign = 'center';
+		this.from.style.fontSize = '15px';
+		this.from.style.lineHeight = '30px';
+		this.from.style.backgroundColor = 'black';
+		this.from.style.color = 'white';
+		this.from.id = 'from';
+		this.from.onchange = function() { that.updateRange()}
+		document.body.append(this.from);
+
+		this.to = document.createElement('input');
+		this.to.type = 'number';
+		this.to.min = 0;
+		this.to.value = this.endTime;
+		this.to.style.zIndex = 10;
+		this.to.style.bottom = '10px';
+		this.to.style.position = 'fixed';
+		this.to.style.right = '10px';
+		this.to.style.width = '80px';
+		this.to.style.height = '30px';
+		this.to.style.textAlign = 'center';
+		this.to.style.fontSize = '15px';
+		this.to.style.lineHeight = '30px';
+		this.to.style.backgroundColor = 'black';
+		this.to.style.color = 'white';
+		this.to.id = 'from';
+		this.to.onchange = function() { that.updateRange()}
+		document.body.append(this.to);
+
+		this.updateRange();
+	}
+	updateRange() {
+		console.log(this.to.value);
+		this.startTime = parseFloat(this.from.value);
+		this.endTime = parseFloat(this.to.value);
+		this.range.min = this.startTime;
+		this.range.max = this.endTime;		
+		this.currentPosition = this.startTime;
+		this.range.value = this.startTime;
+		this.playStart = this.millis()-this.startTime*1000;
+
+	}
+
+	update() {
+		if (this.playing) {
+			this.currentPosition = (this.millis() - this.playStart)/1000;
+			this.range.value = this.currentPosition;
+		}
+		if (this.currentPosition > this.endTime) {
+			this.currentPosition = this.endTime;
+			this.onPlayStop();
+		}
+		this.elapsed.value = this.currentPosition.toFixed(2);
+	}
+
+	onPlayStop() {
+		if (this.playing) {
+			this.playing = false;
+			this.play.innerHTML = '▶';
+		} else {
+			this.playing = true;
+			this.play.innerHTML = '∎';
+			this.playStart = this.millis() - this.currentPosition * 1000;
+		}
+	}
+
+	onChange() {
+		let val = parseFloat(this.range.value);
+//		this.playStart = val * 1000;
+		this.currentPosition = val;
+		this.playStart = this.millis() - this.currentPosition * 1000;
+	}
+
+	getTime() {
+		return this.currentPosition;
+	}
+}
+
+
+
 export {RenderManager}
+export {FPS}
+export {Timeline}
