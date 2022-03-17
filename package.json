@@ -4,12 +4,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-fxhash": "vite build && cd dist/ && jszip-cli add * --output=../dist-zipped/project.zip --force",
     "preview": "vite preview"
   },
   "dependencies": {
     "p5": "^1.4.1"
   },
   "devDependencies": {
+    "@ffflorian/jszip-cli": "^3.1.6",
     "vite": "^2.8.4",
     "vite-plugin-restart": "^0.1.1"
   }
