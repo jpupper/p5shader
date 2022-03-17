@@ -313,6 +313,11 @@ class RenderManager extends p5{
 		this.timestamp = null;
 		this.filename;
 		this.mainShader;
+		setTimeout(() => {
+			setInterval(() => {
+				this.checkTimeStamp();
+			}, 200);
+		}, 1000)
 	}
 
 	setup(){
@@ -325,28 +330,27 @@ class RenderManager extends p5{
 		this.shorojb = []; //Array que determina si el objeto es un shader o no (?)
 	}
 
-	checkTimeStamp(file) {
-		fetch(file, {cache: 'no-store'}).then(r => {
-    		var ts = r.headers.get('Last-Modified');
-			if (this.timestamp && ts != this.timestamp) {
-				this.mainShader.load(this.filename + '?version=' + this.random(100));
+	checkTimeStamp() {
+		if (this.objts.length > 0) {
+			for (var i = 0; i < this.objts.length; i++) {
+				if (this.objts[i] != null) {
+					let obj = this.objts[i];
+					fetch(obj.filename, {cache: 'no-store'}).then(r => {
+						var ts = r.headers.get('Last-Modified');
+						if (obj.timestamp && ts != obj.timestamp) {
+							obj.load(obj.filename + '?version=' + this.random(100));
+						}
+						obj.timestamp = ts;
+					});
+				}
 			}
-			this.timestamp = ts;
-			return r.text();
-		})
+		}
 	}
 
 	addShader(dir,index,_name){
-		this.filename = dir;
-		if (index == 0) {
-			setInterval(() => {
-				this.checkTimeStamp(this.filename);
-			}, 200);
-		}
 		this.objts[index] = new ShaderManager(dir);
 		this.objts[index].name = _name;
-		this.mainShader = this.objts[0];
-
+		this.objts[index].filename = dir;
 		let auxpg;
 		if (QUADCANVAS) {
 			auxpg = this.createGraphics(windowHeight, windowHeight, this.WEBGL);
@@ -1080,9 +1084,9 @@ class Timeline extends p5 {
 		this.range.style.zIndex = 10;
 		this.range.style.position = 'fixed';
 		this.range.style.bottom = '15px';
-		this.range.style.left = '125px';
+		this.range.style.left = '175px';
 		let width = window.innerWidth;
-		this.range.style.width = (width-310)+'px';
+		this.range.style.width = (width-350)+'px';
 		this.range.id = 'timeline';
 		this.range.step = 0.5;
 		this.range.value = 0;
@@ -1101,11 +1105,23 @@ class Timeline extends p5 {
 		this.play.onclick = function() {that.onPlayStop();}
 		document.body.append(this.play);
 
+		this.rewind = document.createElement('button');
+		this.rewind.style.zIndex = 10;
+		this.rewind.style.position = 'fixed';
+		this.rewind.style.bottom = '10px';
+		this.rewind.style.width = '50px';
+		this.rewind.style.height = '30px';
+		this.rewind.style.left = '60px';
+		this.rewind.id = 'rewind';
+		this.rewind.innerHTML = '⮌';
+		this.rewind.onclick = function() {that.onRewind();}
+		document.body.append(this.rewind);
+
 		this.elapsed = document.createElement('input');
 		this.elapsed.style.zIndex = 10;
 		this.elapsed.style.position = 'fixed';
 		this.elapsed.style.bottom = '10px';
-		this.elapsed.style.left = '60px';
+		this.elapsed.style.left = '110px';
 		this.elapsed.style.width = '60px';
 		this.elapsed.style.height = '30px';
 		this.elapsed.style.textAlign = 'center';
@@ -1178,6 +1194,12 @@ class Timeline extends p5 {
 			this.onPlayStop();
 		}
 		this.elapsed.value = this.currentPosition.toFixed(2);
+	}
+
+	onRewind() {
+		this.currentPosition = 0;
+		this.playStart = this.millis();
+		this.range.value = 0;
 	}
 
 	onPlayStop() {

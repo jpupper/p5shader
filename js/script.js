@@ -16,6 +16,7 @@ class Sketch extends p5{
 	preload(){
 		this.RM = new RenderManager();
 		this.RM.addShader("shaders/generative/fondodesolated.frag", 0);
+		this.RM.addShader("shaders/imageprocessing/cgamadness.frag", 1);
 		this.fps = new FPS();
 		this.timeline = new Timeline();
 		// RM.addShader("shaders/imageprocessing/cgamadness.frag",1);
@@ -30,7 +31,7 @@ class Sketch extends p5{
 		this.timeline.update();
 		this.RM.draw();
 		this.RM.update(this.timeline.getTime());
-		this.ellipse(mouseX, mouseY, 20, 20);
+		//this.ellipse(mouseX, mouseY, 20, 20);
 	}
 
 	windowResized() {

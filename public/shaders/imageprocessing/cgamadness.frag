@@ -13,7 +13,7 @@ float effect_mix = 1.0;
 float effect_exp = 0.74;
 float color_mix = 0.57;
 float sample_size = 0.75;
-float saturation = 0.25;
+float saturation = .25;
 
 mat2 rot(float a) {
   float c=cos(a);
