@@ -5,7 +5,7 @@ export default {
     plugins: [
       ViteRestart({
         reload: [
-            './shaders/**/*',
+            './public/shaders/**/*',
         ]
       })
     ],
