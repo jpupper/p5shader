@@ -1,13 +1,9 @@
 const path = require('path')
-import ViteRestart from 'vite-plugin-restart';
+import glslifyCompiler from 'vite-plugin-glslify'
 
 export default {
     plugins: [
-      ViteRestart({
-        reload: [
-            './shaders/**/*',
-        ]
-      })
+      glslifyCompiler()
     ],
     build: {
         lib: {

@@ -8,11 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "glsl-noise": "^0.0.0",
     "p5": "^1.4.1"
   },
   "devDependencies": {
     "@ffflorian/jszip-cli": "^3.1.6",
     "vite": "^2.8.4",
+    "vite-plugin-glslify": "^2.0.1",
     "vite-plugin-restart": "^0.1.1"
   }
 }

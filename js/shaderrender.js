@@ -505,7 +505,7 @@ class ShaderManager extends p5{
 				//console.log("TERMINO EL CALLBACK");
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
-			});0
+			});
 			this.sh = this.loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
