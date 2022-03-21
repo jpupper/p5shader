@@ -1,5 +1,7 @@
 import p5 from 'p5';
 import {RenderManager} from './shaderrender'
+import {FPS} from './shaderrender'
+import {Timeline} from './shaderrender'
 
 class Sketch extends p5{
 	constructor() {
@@ -14,6 +16,9 @@ class Sketch extends p5{
 	preload(){
 		this.RM = new RenderManager();
 		this.RM.addShader("shaders/generative/fondodesolated.frag", 0);
+		this.RM.addShader("shaders/imageprocessing/cgamadness.frag", 1);
+		this.fps = new FPS();
+		this.timeline = new Timeline();
 		// RM.addShader("shaders/imageprocessing/cgamadness.frag",1);
 		// this.windowResized()
 	}
@@ -22,9 +27,11 @@ class Sketch extends p5{
 		const {width, height, mouseX, mouseY} = this
 		// this.translate(-width / 2, -height / 2, 0); //this is necesary for setting the point of origin as usual
 		this.translate(0 , 0,  0); //this is necesary for setting the point of origin as usual
+		this.fps.update();
+		this.timeline.update();
 		this.RM.draw();
-		this.RM.update();
-		this.ellipse(mouseX, mouseY, 20, 20);
+		this.RM.update(this.timeline.getTime());
+		//this.ellipse(mouseX, mouseY, 20, 20);
 	}
 
 	windowResized() {
