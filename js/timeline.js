@@ -1,12 +1,10 @@
-﻿import p5 from 'p5';
-
-class Timeline extends p5 {
-	constructor() {
-		super(() => { })
+﻿class Timeline {
+	constructor(ctx) {
+		this.ctx = ctx;
 		let that = this;
 		this.currentPosition = 0;
 		this.playing = true;
-		this.playStart = this.millis();
+		this.playStart = this.ctx.millis();
 		this.startTime = 0;
 		this.endTime = 60;
 		this.range = document.createElement('input');
@@ -110,13 +108,13 @@ class Timeline extends p5 {
 		this.range.max = this.endTime;
 		this.currentPosition = this.startTime;
 		this.range.value = this.startTime;
-		this.playStart = this.millis() - this.startTime * 1000;
+		this.playStart = this.ctx.millis() - this.startTime * 1000;
 
 	}
 
 	update() {
 		if (this.playing) {
-			this.currentPosition = (this.millis() - this.playStart) / 1000;
+			this.currentPosition = (this.ctx.millis() - this.playStart) / 1000;
 			this.range.value = this.currentPosition;
 		}
 		if (this.currentPosition > this.endTime) {
@@ -128,7 +126,7 @@ class Timeline extends p5 {
 
 	onRewind() {
 		this.currentPosition = 0;
-		this.playStart = this.millis();
+		this.playStart = this.ctx.millis();
 		this.range.value = 0;
 	}
 
@@ -139,7 +137,7 @@ class Timeline extends p5 {
 		} else {
 			this.playing = true;
 			this.play.innerHTML = '∎';
-			this.playStart = this.millis() - this.currentPosition * 1000;
+			this.playStart = this.ctx.millis() - this.currentPosition * 1000;
 		}
 	}
 
@@ -147,7 +145,7 @@ class Timeline extends p5 {
 		let val = parseFloat(this.range.value);
 		//		this.playStart = val * 1000;
 		this.currentPosition = val;
-		this.playStart = this.millis() - this.currentPosition * 1000;
+		this.playStart = this.ctx.millis() - this.currentPosition * 1000;
 	}
 
 	getTime() {
