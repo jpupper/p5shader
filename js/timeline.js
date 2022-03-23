@@ -7,6 +7,15 @@
 		this.playStart = this.ctx.millis();
 		this.startTime = 0;
 		this.endTime = 60;
+
+
+
+
+		this.container = document.createElement('div');
+		this.container.id = "timelinecontainer"
+		document.body.append(this.container);
+
+
 		this.range = document.createElement('input');
 		this.range.type = 'range';
 		this.range.style.zIndex = 10;
@@ -19,7 +28,7 @@
 		this.range.step = 0.5;
 		this.range.value = 0;
 		this.range.oninput = function () { that.onChange(); }
-		document.body.append(this.range);
+		this.container.appendChild(this.range);
 
 		this.play = document.createElement('button');
 		this.play.style.zIndex = 10;
@@ -31,7 +40,7 @@
 		this.play.id = 'play';
 		this.play.innerHTML = '∎';
 		this.play.onclick = function () { that.onPlayStop(); }
-		document.body.append(this.play);
+		this.container.appendChild(this.play);
 
 		this.rewind = document.createElement('button');
 		this.rewind.style.zIndex = 10;
@@ -43,7 +52,7 @@
 		this.rewind.id = 'rewind';
 		this.rewind.innerHTML = '⮌';
 		this.rewind.onclick = function () { that.onRewind(); }
-		document.body.append(this.rewind);
+		this.container.appendChild(this.rewind);
 
 		this.elapsed = document.createElement('input');
 		this.elapsed.style.zIndex = 10;
@@ -58,7 +67,7 @@
 		this.elapsed.style.backgroundColor = 'black';
 		this.elapsed.style.color = 'white';
 		this.elapsed.id = 'elapsed';
-		document.body.append(this.elapsed);
+		this.container.appendChild(this.elapsed);
 
 		this.from = document.createElement('input');
 		this.from.type = 'number';
@@ -77,7 +86,7 @@
 		this.from.style.color = 'white';
 		this.from.id = 'from';
 		this.from.onchange = function () { that.updateRange() }
-		document.body.append(this.from);
+		this.container.appendChild(this.from);
 
 		this.to = document.createElement('input');
 		this.to.type = 'number';
@@ -96,7 +105,7 @@
 		this.to.style.color = 'white';
 		this.to.id = 'from';
 		this.to.onchange = function () { that.updateRange() }
-		document.body.append(this.to);
+		this.container.appendChild(this.to);
 
 		this.updateRange();
 	}

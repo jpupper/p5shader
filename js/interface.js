@@ -1,13 +1,13 @@
-import p5 from 'p5';
-export class Interface extends p5{
+
+export class Interface {
 	//var cosos = [];
-	constructor(RM) {
-		super(() => { })
+	constructor(ctx,RM) {
+		
+
+		this.ctx = ctx;
 		this.drawActive = true;
 		this.RM = RM;
 		this.generateSliders();
-
-
 	}
 	generateSliders() {
 		this.cajitas = [];
@@ -55,7 +55,6 @@ export class Interface extends p5{
 				}
 			}
 		}
-		
 	}
 	update() {
 		if (this.sliders.length > 0) {
@@ -67,7 +66,6 @@ export class Interface extends p5{
 			}
 		}
 	}
-
 	draw() {
 		if (this.drawActive) {
 			if (this.sliders.length > 0) {
@@ -82,8 +80,9 @@ export class Interface extends p5{
 			}
 		}
 
-		this.fill(255);
-		this.ellipse(this.mouseX, this.mouseY, 50, 50);
+		//console.log("asas");
+		this.fill(255,0,0);
+		this.ellipse(this.mouseX, this.mouseY, 150, 200);
 	}
 	cleanSliders() {
 		this.cajitas = [];
@@ -96,9 +95,10 @@ export class Interface extends p5{
     }
 }
 
-export class Cajita extends p5{
-	constructor(x, y, name, index, isActiveOne) {
-		super(() => { })
+export class Cajita{
+	constructor(ctx,x, y, name, index, isActiveOne) {
+
+		this.ctx = ctx;
 		this.pos = this.createVector(x, y);
 		this.name = name;
 		this.index = index;
@@ -130,10 +130,10 @@ export class Cajita extends p5{
 
     }
 }
-export class Slider extends p5{
+export class Slider{
 
-	constructor(x, y, name, value, w, h) {
-		super(() => { })
+	constructor(ctx,x, y, name, value, w, h) {
+		this.ctx = ctx;
 		this.pos = this.createVector(x, y);
 		this.name = name;
 		this.w = w;

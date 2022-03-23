@@ -38,9 +38,9 @@ class RenderManager{
 	addP5draw(obj,index){
 		const {createGraphics, windowWidth, windowHeight, WEBGL} = this.ctx
 		if (WEBGL_ON) {
-				this.pgs[index] = createGraphics(windowWidth, windowHeight, WEBGL);
+			this.pgs[index] = createGraphics(windowWidth, windowHeight, WEBGL);
 		} else {
-				this.pgs[index] = createGraphics(windowWidth, windowHeight);
+			this.pgs[index] = createGraphics(windowWidth, windowHeight);
 		}
 
 		this.objts[index] = obj;
@@ -70,18 +70,14 @@ class RenderManager{
 		if (_w) {
 			w = _w;
 		}
-
 		if (_h) {
 			h = _h;
 		}
-
 		let x = 0;
 		let y = 0;
-
 		if (_x) {
 			x = _x;
 		}
-
 		if (_y) {
 			y = _y;
 		}
