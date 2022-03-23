@@ -2,7 +2,7 @@ import { genR } from './utils';
 
 let WEBGL_ON = false; //Algunas funcionan con esto otras no. //Si cambia esto cambia e
 
-export class RenderManager{
+class RenderManager{
 	//var cosos = [];
 	constructor(ctx){
 		this.ctx = ctx;
@@ -279,4 +279,7 @@ class ShaderManager{
 	}
 }
 
-// export {RenderManager}
+export {
+	RenderManager,
+	ShaderManager
+}
