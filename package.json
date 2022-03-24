@@ -7,9 +7,6 @@
     "build-fxhash": "vite build && cd dist/ && jszip-cli --ignore .git/ add ./ --output=../dist-zipped/project.zip --force",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "p5i": "^0.4.2"
-  },
   "devDependencies": {
     "@ffflorian/jszip-cli": "^3.1.6",
     "vite": "^2.8.4",

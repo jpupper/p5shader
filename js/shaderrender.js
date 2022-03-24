@@ -4,9 +4,7 @@ let WEBGL_ON = false; //Algunas funcionan con esto otras no. //Si cambia esto ca
 
 class RenderManager{
 	//var cosos = [];
-	constructor(ctx){
-		this.ctx = ctx;
-
+	constructor(){
 		this.pgs = [];//ARRAY DE LOS PGRAPHICS
 		this.objts = [];//ARRAY DE LOS OBJETOS
 		this.shorojb = []; //ESTO ES PARA QUE SEPA SI TIPO TIENE QUE O ACTUALIZAR EL SHADER O EL OBJETO.
@@ -20,9 +18,8 @@ class RenderManager{
 	}
 
 	addShader(dir,index,_name){
-		this.objts[index] = new ShaderManager(dir,  this.ctx);
+		this.objts[index] = new ShaderManager(dir);
 		this.objts[index].name = _name;
-		const {createGraphics, windowWidth, windowHeight, WEBGL} = this.ctx
 		let auxpg;
 			auxpg = createGraphics(windowWidth, windowHeight, WEBGL);
 
@@ -36,7 +33,6 @@ class RenderManager{
 
 	}
 	addP5draw(obj,index){
-		const {createGraphics, windowWidth, windowHeight, WEBGL} = this.ctx
 		if (WEBGL_ON) {
 			this.pgs[index] = createGraphics(windowWidth, windowHeight, WEBGL);
 		} else {
@@ -57,15 +53,15 @@ class RenderManager{
 	resize(){
 		for (var i =0; i<this.pgs.length; i++){
 			console.log("RISIZ "+i);
-			this.pgs[i].resizeCanvas(this.ctx.windowWidth,this.ctx.windowHeight);
+			this.pgs[i].resizeCanvas(windowWidth, windowHeight);
 		}
 	}
 
 
 	// draw(_x,_y,_w,_h){
 	draw(_x,_y,_w,_h){
-		let w = this.ctx.windowWidth;
-		let h = this.ctx.windowHeight;
+		let w = windowWidth;
+		let h = windowHeight;
 
 		if (_w) {
 			w = _w;
@@ -83,7 +79,7 @@ class RenderManager{
 		}
 		this.updateDrawOnBuffers();
 		if (this.pgs.length > 0 && this.pgs[this.activeRender] != null) {
-			this.ctx.image(this.pgs[this.activeRender], x, y, w, h);
+			image(this.pgs[this.activeRender], x, y, w, h);
 		}
 	}
 	updateDrawOnBuffers() {
@@ -96,7 +92,7 @@ class RenderManager{
 				if (this.objts[i].loaded) {
 					this.pgs[i].shader(this.objts[i].sh);
 				}
-				this.pgs[i].rect(this.ctx.windowWidth, this.ctx.windowHeight, 0, 0);
+				this.pgs[i].rect(windowWidth, windowHeight, 0, 0);
 			}
 		}
 	}
@@ -148,9 +144,7 @@ class RenderManager{
 }
 
 class ShaderManager{
-	constructor(dir, ctx) {
-		this.ctx = ctx
-
+	constructor(dir) {
 		this.loaded = false;
 		this.reservedWords = ["feedback","resolution","time",
 			"mouse","tx","tx2","tx3","let","mousePressed",
@@ -164,7 +158,7 @@ class ShaderManager{
 
 			this.name = dir;
 			//pasarAarray();
-			this.ctx.loadStrings(dir, (result) => {
+			loadStrings(dir, (result) => {
 				let localUniformsValues = [];
 				let localUniformsNames = [];
 				for (let i = 0; i < result.length; i++) {
@@ -188,7 +182,7 @@ class ShaderManager{
 				this.localUniformsNames = localUniformsNames;
 				this.localUniformsValues = localUniformsValues;
 			});0
-			this.sh = this.ctx.loadShader('shaders/base.vert', this.dir, () => {
+			this.sh = loadShader('shaders/base.vert', this.dir, () => {
 				this.loaded = true;
 			});
 		}
@@ -235,7 +229,6 @@ class ShaderManager{
 	update(_pg, time) {
 		//This are the global uniforms. The ones for all shaders
 		//Estas son los uniforms globales, las que entran en todos los shaders
-		const {width, height, mouseIsPressed, mouseX, mouseY, touches, millis} = this.ctx
 		if (this.loaded) {
 			this.sh.setUniform("feedback",_pg)
 			this.sh.setUniform("resolution", [width, height])

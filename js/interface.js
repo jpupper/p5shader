@@ -1,10 +1,7 @@
 
 export class Interface {
 	//var cosos = [];
-	constructor(ctx,RM) {
-		
-
-		this.ctx = ctx;
+	constructor(RM) {
 		this.drawActive = true;
 		this.RM = RM;
 		this.generateSliders();
@@ -13,23 +10,13 @@ export class Interface {
 		this.cajitas = [];
 		this.sliders = [];
 
-		const { windowWidth,
-			windowHeight,
-			width,
-			height,
-			mouseX,
-			mouseY,
-			touches,
-			mouseIsPressed
-			 } = this;
-
 		let margintop = 20;
 		let sepy = 30;
 		let marginsepydown = 10;
 		let yy = margintop;
 		let w = 150;
 		let h = sepy;
-	
+
 		if (this.RM.objts.length > 0 && this.RM.shorojb[this.RM.activeRender] != 1) {
 			if (this.RM.objts[this.RM.activeRender].localUniformsNames.length > 0 ) {
 				for (let i = 0; i < this.RM.objts[this.RM.activeRender].localUniformsNames.length; i++) {
@@ -81,8 +68,8 @@ export class Interface {
 		}
 
 		//console.log("asas");
-		this.fill(255,0,0);
-		this.ellipse(this.mouseX, this.mouseY, 150, 200);
+		fill(255,0,0);
+		ellipse(mouseX, mouseY, 150, 200);
 	}
 	cleanSliders() {
 		this.cajitas = [];
@@ -96,34 +83,33 @@ export class Interface {
 }
 
 export class Cajita{
-	constructor(ctx,x, y, name, index, isActiveOne) {
+	constructor(x, y, name, index, isActiveOne) {
 
-		this.ctx = ctx;
-		this.pos = this.createVector(x, y);
+		this.pos = createVector(x, y);
 		this.name = name;
 		this.index = index;
 		this.w = 200;
 		this.h = 30;
 		this.active = isActiveOne;
 
-		
+
 	}
 	draw() {
 		let txt = this.name + " " + this.index;
 		if (this.active) {
-			this.fill(255);
+			fill(255);
 		} else {
-			this.fill(0);
+			fill(0);
 		}
-		this.rect(this.pos.x, this.pos.y, this.textWidth(txt), this.h);
-		this.textAlign(this.LEFT, this.CENTER);
+		rect(this.pos.x, this.pos.y, textWidth(txt), this.h);
+		textAlign(this.LEFT, this.CENTER);
 
 		if (this.active) {
-			this.fill(0);
+			fill(0);
 		} else {
-			this.fill(255);
+			fill(255);
 		}
-		this.text(txt, this.pos.x, this.pos.y + 15);
+		text(txt, this.pos.x, this.pos.y + 15);
 		//rect(mouseX - windowWidth/2,mouseY - windowHeight/2, 200, 400);
 	}
 	update() {
@@ -132,9 +118,8 @@ export class Cajita{
 }
 export class Slider{
 
-	constructor(ctx,x, y, name, value, w, h) {
-		this.ctx = ctx;
-		this.pos = this.createVector(x, y);
+	constructor(x, y, name, value, w, h) {
+		this.pos = createVector(x, y);
 		this.name = name;
 		this.w = w;
 		this.h = h;
@@ -150,35 +135,35 @@ export class Slider{
 		let my = mouseY ;
 
 		//FONDO
-		this.fill(0);
-		this.rect(xx, yy, this.w, this.h);
+		fill(0);
+		rect(xx, yy, this.w, this.h);
 
 		if (this.isFxHashControlled) {
 			if (overRect(mx, my, xx, yy, this.w, this.h)) {
-				this.fill(255,0,0);
+				fill(255,0,0);
 				if (mouseIsPressed) {
 					this.value = map(mx, xx, xx + this.w, 0.0, 1.0);
 					console.log(this.value);
 				}
 			} else {
-				this.fill(150,0,0);
+				fill(150,0,0);
 			}
 		} else {
 			if (overRect(mx, my, xx, yy, this.w, this.h)) {
-				this.fill(255);
+				fill(255);
 				if (mouseIsPressed) {
 					this.value = map(mx, xx, xx + this.w, 0.0, 1.0);
 					console.log(this.value);
 				}
 			} else {
-				this.fill(150);
+				fill(150);
 			}
         }
 		//RECT SUPERIOR:
-		this.rect(xx, yy, map(this.value, 0., 1., 0, this.w), this.h);
-		this.fill(255);
-		this.textSize(20);
-		this.textAlign(CENTER, CENTER);
-		this.text(this.name, xx+ this.w/2, yy+this.h/2);
+		rect(xx, yy, map(this.value, 0., 1., 0, this.w), this.h);
+		fill(255);
+		textSize(20);
+		textAlign(CENTER, CENTER);
+		text(this.name, xx+ this.w/2, yy+this.h/2);
 	}
 }
