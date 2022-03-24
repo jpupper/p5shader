@@ -1,10 +1,9 @@
 ﻿class Timeline {
-	constructor(ctx) {
-		this.ctx = ctx;
+	constructor() {
 		let that = this;
 		this.currentPosition = 0;
 		this.playing = true;
-		this.playStart = this.ctx.millis();
+		this.playStart = millis();
 		this.startTime = 0;
 		this.endTime = 60;
 
@@ -117,13 +116,13 @@
 		this.range.max = this.endTime;
 		this.currentPosition = this.startTime;
 		this.range.value = this.startTime;
-		this.playStart = this.ctx.millis() - this.startTime * 1000;
+		this.playStart = millis() - this.startTime * 1000;
 
 	}
 
 	update() {
 		if (this.playing) {
-			this.currentPosition = (this.ctx.millis() - this.playStart) / 1000;
+			this.currentPosition = (millis() - this.playStart) / 1000;
 			this.range.value = this.currentPosition;
 		}
 		if (this.currentPosition > this.endTime) {
@@ -135,7 +134,7 @@
 
 	onRewind() {
 		this.currentPosition = 0;
-		this.playStart = this.ctx.millis();
+		this.playStart = millis();
 		this.range.value = 0;
 	}
 
@@ -146,7 +145,7 @@
 		} else {
 			this.playing = true;
 			this.play.innerHTML = '∎';
-			this.playStart = this.ctx.millis() - this.currentPosition * 1000;
+			this.playStart = millis() - this.currentPosition * 1000;
 		}
 	}
 
@@ -154,7 +153,7 @@
 		let val = parseFloat(this.range.value);
 		//		this.playStart = val * 1000;
 		this.currentPosition = val;
-		this.playStart = this.ctx.millis() - this.currentPosition * 1000;
+		this.playStart = millis() - this.currentPosition * 1000;
 	}
 
 	getTime() {
